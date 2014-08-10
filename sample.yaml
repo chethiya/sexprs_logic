@@ -16,17 +16,19 @@ condition:
     comp: regex
     val: '^[0-9]+'
   -
-   age: 
+   age:
     comp: lt
     val: 27
  -
   - OR
-  - 
+  -
    school:
     comp: regex
     val: '[Cc]ollege'
   -
    school: Devi Balika
+ -
+  meta.dataset: employee
 
 records:
  -
@@ -34,15 +36,17 @@ records:
   age: 27
   address: 23A, Ella way, Kurunegala
   school: Maliyadeva College
- - 
+  meta:
+   dataset: 'employee'
+ -
   name: gangani
   age: 26
   address: homagama
   school: Devi Balika
- - 
+ -
   name: tharaka
   age: 33
   address:  02342, Oman
   school: Maliyadeva College
 
-   
+

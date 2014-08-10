@@ -1,3 +1,4 @@
+console.log 'Running compiled test'
 fs = require 'fs'
 YAML = require 'yamljs'
 sexprs = require './sexprs_logic'
@@ -8,9 +9,8 @@ o = YAML.parse s
 console.log 'Yaml file has been parsed with no errors'
 cond = o.condition
 records = o.records
-for r, i in records
- console.log "Record #{i}: #{sexprs.test cond, r}"
-
+res = ''
 test = sexprs.compile cond
-for r, i in records
- console.log "Record #{i}: #{test r}"
+for i in [0...1000000]
+ res = test records[i%3]
+console.log res
