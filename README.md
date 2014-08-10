@@ -1,13 +1,13 @@
 S-Expression Logic
 ==================
 
-s-expression based logic reresented in YAML (JSON) to evaluate on a data object. When there is a stream of data objects to evaluate against one logic, you can call `compile(condition)` function to generate `test(obj)` function on the run.
+This is a node library to evaluate data objects using an s-expression based logic reresented in YAML (JSON). When there is a stream of data objects to evaluate against one logic, you can use `compile(condition)` function to generate `test(obj)` providing an efficient way of evaluation.
 
 #API
 
 `test(condition, obj)`
 
- - returns true or false based on whether obj satisfies the logic in condition
+ - returns `true` or `false` based on whether `obj` satisfies the logic in `condition`
 
 `compile(condition)`
 
