@@ -1,0 +1,23 @@
+condition:
+ - AND
+ -
+  - OR
+  -
+   name:
+    - is
+    - chethiya
+   age:
+    - gte
+    - 27
+  -
+   name:
+    - is
+    - gangani
+  -
+   address:
+    - regex
+    - '^[0-9]+'
+ -
+  school:
+   - regex
+   - '[Cc]ollege'
