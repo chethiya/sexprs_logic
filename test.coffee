@@ -8,9 +8,7 @@ o = YAML.parse s
 console.log 'Yaml file has been parsed with no errors'
 cond = o.condition
 records = o.records
-for r, i in records
- console.log "Record #{i}: #{sexprs.test cond, r}"
-
 test = sexprs.compile cond
+#console.log test.toString()
 for r, i in records
- console.log "Record #{i}: #{test r}"
+ console.log "Record #{i} - test: #{sexprs.test cond, r}, compile -  #{test r}"

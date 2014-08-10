@@ -50,7 +50,7 @@ compile = (cond) ->
     st += ";\n"
 
     comp = val = undefined
-    if typeof v is 'string'
+    if (typeof v is 'string') or (typeof v is 'number')
      comp = 'is'
      val = v
     else if (typeof v is 'object') and not (v instanceof Array)
@@ -88,6 +88,9 @@ compile = (cond) ->
     else if comp is 'regex'
      st += "#{TABL}val = new RegExp(val);\n"
      st += "#{TABL}l#{l+1} = val.test(lit);\n"
+    else
+     throw "Invalid comparator: #{comp}"
+
 
     st += "#{TABL}l#{l} = l#{l+1};\n"
 
