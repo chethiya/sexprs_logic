@@ -3,21 +3,46 @@ condition:
  -
   - OR
   -
-   name:
-    - is
-    - chethiya
+   name: chethiya
    age:
-    - gte
-    - 27
+    comp: gte
+    val: 27
   -
    name:
-    - is
-    - gangani
+    comp: is
+    val: gangani
   -
    address:
-    - regex
-    - '^[0-9]+'
+    comp: regex
+    val: '^[0-9]+'
+  -
+   age: 
+    comp: lt
+    val: 27
  -
-  school:
-   - regex
-   - '[Cc]ollege'
+  - OR
+  - 
+   school:
+    comp: regex
+    val: '[Cc]ollege'
+  -
+   school: Devi Balika
+
+records:
+ -
+  name: chethiya
+  age: 27
+  address: 23A, Ella way, Kurunegala
+  school: Maliyadeva College
+ - 
+  name: gangani
+  age: 26
+  address: homagama
+  school: Devi Balika
+ - 
+  name: tharaka
+  age: 33
+  address:  02342, Oman
+  school: Maliyadeva College
+
+   
