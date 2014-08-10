@@ -26,14 +26,15 @@ compile = (cond) ->
    for i in [1...cond.length]
     st += "#{tab}if (l#{l} == #{res}) {\n"
     dfs l+1, cond[i]
-    st += "#{tab}l#{l} = l#{l+1};\n"
+    st += "#{tab} l#{l} = l#{l+1};\n"
     st += "#{tab}}\n"
   else
    for k, v of cond
     st += "#{tab}if (l#{l} == #{res}) {\n"
-    #TODO leaf step
+    # leaf step
     TABL = tab + ' '
     keys = k.split '.'
+    st += "#{TABL}val = void 0;\n"
     st += "#{TABL}lit = typeof obj !== \"undefined\" && obj !== null"
     key = ''
     for i in [0...keys.length-1]
@@ -88,8 +89,9 @@ compile = (cond) ->
      st += "#{TABL}val = new RegExp(val);\n"
      st += "#{TABL}l#{l+1} = val.test(lit);\n"
 
+    st += "#{TABL}l#{l} = l#{l+1};\n"
+
     # leaf step
-    st += "#{tab}l#{l} = l#{l+1};\n"
     st += "#{tab}}\n"
   if l is 0
    st += "#{tab}return l0;"
@@ -168,5 +170,6 @@ test = (cond, obj) ->
 
 exports?.compile = compile
 exports?.test = test
-window?.compile = compile
-window?.test = test
+window?.SExprsLogic =
+ compile: compile
+ test: test
