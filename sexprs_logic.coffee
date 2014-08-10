@@ -1,9 +1,8 @@
 #compile cond s-expression to a test function
 compile = (cond) ->
  st = ''
- dfs = (l, cond) ->
-  tab = ''
-  tab += ' ' for i in [0...l]
+ gc = 0
+ dfs = (l, cond, tab) ->
   oper = undefined
   isMap = off
   if (typeof cond is 'object') and (cond instanceof Array)
@@ -25,7 +24,7 @@ compile = (cond) ->
   if isMap is off
    for i in [1...cond.length]
     st += "#{tab}if (l#{l} == #{res}) {\n"
-    dfs l+1, cond[i]
+    dfs l+1, cond[i], tab + ' '
     st += "#{tab} l#{l} = l#{l+1};\n"
     st += "#{tab}}\n"
   else
@@ -86,8 +85,8 @@ compile = (cond) ->
     else if comp is'lt'
      st += "#{TABL}l#{l+1} = lit < val;\n"
     else if comp is 'regex'
-     st += "#{TABL}val = new RegExp(val);\n"
-     st += "#{TABL}l#{l+1} = val.test(lit);\n"
+     st = "global#{gc} = new RegExp(\"#{val}\");\n" + st
+     st += "#{TABL}l#{l+1} = global#{gc++}.test(lit);\n"
     else
      throw "Invalid comparator: #{comp}"
 
@@ -97,9 +96,11 @@ compile = (cond) ->
     # leaf step
     st += "#{tab}}\n"
   if l is 0
-   st += "#{tab}return l0;"
- dfs 0, cond
- return new Function 'obj', st
+   st += "#{tab}return l0;\n"
+ st += "return function(obj) {\n"
+ dfs 0, cond, ' '
+ st += "}\n"
+ return (new Function '', st)()
 
 
 #test obj against cond s-expression

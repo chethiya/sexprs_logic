@@ -1,6 +1,8 @@
 condition:
  - OR
  -
+  meta.dataset: employee
+ -
   one.two.three.four.five: 5
  -
   - AND
