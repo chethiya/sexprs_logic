@@ -1,4 +1,4 @@
-console.log 'Without compilation'
+console.log 'Running compiled by bind test'
 fs = require 'fs'
 YAML = require 'yamljs'
 sexprs = require './sexprs_logic'
@@ -10,6 +10,7 @@ console.log 'Yaml file has been parsed with no errors'
 cond = o.condition
 records = o.records
 res = ''
+test = sexprs.compileByBind cond
 for i in [0...1000000]
- res = sexprs.test cond, records[i%records.length]
+ res = test records[i%records.length]
 console.log res

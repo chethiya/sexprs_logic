@@ -9,8 +9,9 @@ console.log 'Yaml file has been parsed with no errors'
 cond = o.condition
 records = o.records
 test = sexprs.compile cond
+test2 = sexprs.compileByBind cond
 #console.log test.toString()
 #console.log cond[3][2] #college regex
 #console.log records[2] #college record
 for r, i in records
- console.log "Record #{i} - test: #{sexprs.test cond, r}, compile -  #{test r}"
+ console.log "Record #{i} - test: #{sexprs.test cond, r}, compile - #{test r}, bind - #{test2 r}"

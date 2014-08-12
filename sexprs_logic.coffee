@@ -119,9 +119,123 @@ compile = (cond) ->
  st += "return function(obj) {\n"
  dfs 0, cond, ' '
  st += "}\n"
- console.log st
  return (new Function '', st)()
 
+#compile the condition by binding condition functions
+compileByBind = (cond) ->
+ cast = (type, val) ->
+  return val unless type?
+  if type is 'date'
+   return new Date val
+  else if type is 'int'
+   return parseInt val
+  else
+   return val
+ keyVal = (obj, keys) ->
+  kval = obj
+  kval = kval?[k] for k in keys
+  return kval
+
+ #Operations def
+ oper_is = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return kval is @val
+
+ oper_gte = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return kval >= @val
+
+
+ oper_gt = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return kval > @val
+
+
+ oper_lte = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return kval <= @val
+
+ oper_lt = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return kval < @val
+
+
+ oper_regex = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  return @val.test kval
+ #Operations def
+
+ oper_andornot = (obj) ->
+  res = off
+  res = on if @oper is 'and'
+  if @oper is 'not'
+   res = not @funcs[0] obj if @funcs.length > 0
+  else
+   for f, i in @funcs
+    res = f obj
+    break if (@oper is 'and' and res is off) or (@oper is 'or' and res is on)
+  return res
+
+ createFunc = (cond) ->
+  if (typeof cond is 'object') and (cond instanceof Array)
+   oper = cond[0]?.trim().toLowerCase()
+   if oper isnt 'and' and oper isnt 'or' and oper isnt 'not'
+    throw "Invalid binary operation: #{cond[0]}"
+   context =
+    oper: oper
+    funcs: []
+   context.funcs.push createFunc cond[i] for i in [1...cond.length]
+   return oper_andornot.bind context
+  else if typeof cond is 'object'
+   context =
+    oper: 'and'
+    funcs: []
+   for k, v of cond
+    c =
+     keys: []
+     val: undefined
+     type: undefined
+    c.keys = k.split '.' if typeof k is 'string' and k.length > 0
+
+    comp = undefined
+    if typeof v is 'string' or typeof v is 'number'
+     comp = 'is'
+     c.val = v
+    else if (typeof v is 'object') and (v instanceof RegExp)
+     comp = 'regex'
+     c.val = v
+    else if (typeof v is 'object') and not (v instanceof Array)
+     comp = v.comp?.trim().toLowerCase()
+     c.val = v.val
+     c.type = v.type if v.type?
+    else
+     throw "Invalid comparison object"
+
+    if comp is 'regex'
+     c.val = new RegExp c.val
+    else if c.type?
+     if c.type is 'date'
+      c.val = new Date c.val
+     else if c.type is 'int'
+      c.val = parseInt c.val
+
+    if comp is 'is'
+     context.funcs.push oper_is.bind c
+    else if comp is 'gte'
+     context.funcs.push oper_gte.bind c
+    else if comp is 'gt'
+     context.funcs.push oper_gt.bind c
+    else if comp is 'lte'
+     context.funcs.push oper_lte.bind c
+    else if comp is 'lt'
+     context.funcs.push oper_lt.bind c
+    else if comp is 'regex'
+     context.funcs.push oper_regex.bind c
+    else
+     throw "Invalid operator: #{comp}"
+
+   return oper_andornot.bind context
+ return createFunc cond
 
 #test obj against cond s-expression
 test = (cond, obj) ->
@@ -193,7 +307,9 @@ test = (cond, obj) ->
   throw "Invalid condition"
 
 exports?.compile = compile
+exports?.compileByBind = compileByBind
 exports?.test = test
 window?.SExprsLogic =
  compile: compile
+ compileByBind: compileByBind
  test: test

@@ -12,5 +12,5 @@ records = o.records
 res = ''
 test = sexprs.compile cond
 for i in [0...1000000]
- res = test records[i%3]
+ res = test records[i%records.length]
 console.log res
