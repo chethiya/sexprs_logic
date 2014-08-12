@@ -30,7 +30,7 @@ condition:
    -
     school:
      comp: regex
-     val: '[Cc]ollege'
+     val: '^\".*[Cc]ollege\"$'
    -
     school: Devi Balika
 
@@ -49,7 +49,7 @@ records:
   name: tharaka
   age: 33
   address:  02342, Oman
-  school: Maliyadeva College
+  school: "\"Maliyadeva College\""
  - {}
  -
   meta:

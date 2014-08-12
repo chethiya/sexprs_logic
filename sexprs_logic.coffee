@@ -52,47 +52,66 @@ compile = (cond) ->
     if (typeof v is 'string') or (typeof v is 'number')
      comp = 'is'
      val = v
+    else if (typeof v is 'object') and (v instanceof RegExp)
+     comp = 'regex'
+     val = v
     else if (typeof v is 'object') and not (v instanceof Array)
      comp = v.comp?.trim().toLowerCase()
      val = v.val
 
+    vst = ''
     if typeof val is 'string'
      val = (val.replace /\\/g, '\\\\').replace /"/g, "\\\""
-     st += "#{TABL}val = \"#{val}\";\n"
+     vst = "var temp = \"#{val}\";\n"
     else if typeof val is 'number'
-     st += "#{TABL}val = #{val};\n"
+     vst = "var temp = #{val};\n"
+    else
+     vst = "var temp = #{val};\n"
 
+    #lit cast
     if v.type?
      if v.type is 'date'
-      st += "#{TABL}if (lit !== null && val !== null){ \n"
+      st += "#{TABL}if (lit !== null){ \n"
       st += "#{TABL} lit = new Date(lit);\n"
-      st += "#{TABL} val = new Date(val);\n"
       st += "#{TABL}}\n"
      else if v.type is 'int'
-      st += "#{TABL}if (lit !== null && val !== null){ \n"
+      st += "#{TABL}if (lit !== null){ \n"
       st += "#{TABL} lit = parseInt(lit);\n"
-      st += "#{TABL} val = parseInt(val);\n"
       st += "#{TABL}}\n"
+     else
+      throw "Unknown type #{v.type}"
+
+    #global cast
+    if comp is 'regex'
+     vst += "var global#{gc} = new RegExp(temp);\n"
+    else
+     if v.type?
+      if v.type is 'date'
+       vst += "var global#{gc} = new Date(temp);\n"
+      else if v.type is 'int'
+       vst += "var global#{gc} = parseInt(temp);\n"
+     else
+      vst += "var global#{gc} = temp;\n"
+    st = vst + st
 
     if comp is 'is'
-     st += "#{TABL}l#{l+1} = lit == val;\n"
+     st += "#{TABL}l#{l+1} = lit == global#{gc};\n"
     else if comp is 'gte'
-     st += "#{TABL}l#{l+1} = lit >= val;\n"
+     st += "#{TABL}l#{l+1} = lit >= global#{gc};\n"
     else if comp is 'gt'
-     st += "#{TABL}l#{l+1} = lit > val;\n"
+     st += "#{TABL}l#{l+1} = lit > global#{gc};\n"
     else if comp is 'lte'
-     st += "#{TABL}l#{l+1} = lit <= val;\n"
+     st += "#{TABL}l#{l+1} = lit <= global#{gc};\n"
     else if comp is'lt'
-     st += "#{TABL}l#{l+1} = lit < val;\n"
+     st += "#{TABL}l#{l+1} = lit < global#{gc};\n"
     else if comp is 'regex'
-     st = "global#{gc} = new RegExp(\"#{val}\");\n" + st
-     st += "#{TABL}l#{l+1} = global#{gc++}.test(lit);\n"
+     st += "#{TABL}l#{l+1} = global#{gc}.test(lit);\n"
     else
      throw "Invalid comparator: #{comp}"
 
 
     st += "#{TABL}l#{l} = l#{l+1};\n"
-
+    gc++
     # leaf step
     st += "#{tab}}\n"
   if l is 0
@@ -100,6 +119,7 @@ compile = (cond) ->
  st += "return function(obj) {\n"
  dfs 0, cond, ' '
  st += "}\n"
+ console.log st
  return (new Function '', st)()
 
 

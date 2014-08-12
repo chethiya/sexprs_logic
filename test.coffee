@@ -10,5 +10,7 @@ cond = o.condition
 records = o.records
 test = sexprs.compile cond
 #console.log test.toString()
+#console.log cond[3][2] #college regex
+#console.log records[2] #college record
 for r, i in records
  console.log "Record #{i} - test: #{sexprs.test cond, r}, compile -  #{test r}"
