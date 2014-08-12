@@ -55,6 +55,9 @@ compile = (cond) ->
     else if (typeof v is 'object') and (v instanceof RegExp)
      comp = 'regex'
      val = v
+    else if (typeof v is 'object') and (v instanceof Date)
+     comp = 'is'
+     val = v
     else if (typeof v is 'object') and not (v instanceof Array)
      comp = v.comp?.trim().toLowerCase()
      val = v.val
@@ -65,6 +68,8 @@ compile = (cond) ->
      vst = "var temp = \"#{val}\";\n"
     else if typeof val is 'number'
      vst = "var temp = #{val};\n"
+    else if (typeof val is 'object') and (val instanceof Date)
+     vst = "var temp = new Date(#{val.getTime()});\n"
     else
      vst = "var temp = #{val};\n"
 
@@ -95,7 +100,10 @@ compile = (cond) ->
     st = vst + st
 
     if comp is 'is'
-     st += "#{TABL}l#{l+1} = lit == global#{gc};\n"
+     if v.type is 'date' or val instanceof Date
+      st += "#{TABL}l#{l+1} = (lit instanceof Date && global#{gc} instanceof Date) ? lit.getTime() == global#{gc}.getTime() : false;\n"
+     else
+      st += "#{TABL}l#{l+1} = lit == global#{gc};\n"
     else if comp is 'gte'
      st += "#{TABL}l#{l+1} = lit >= global#{gc};\n"
     else if comp is 'gt'
@@ -139,6 +147,8 @@ compileByBind = (cond) ->
  #Operations def
  oper_is = (obj) ->
   kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return @val.getTime() is kval.getTime()
   return kval is @val
 
  oper_gte = (obj) ->
@@ -288,7 +298,10 @@ test = (cond, obj) ->
    #console.log "comp: #{comp}, Key literal: #{lit}, val: #{val}"
 
    if comp is 'is'
-    res = false if lit isnt val
+    if val instanceof Date and lit instanceof Date
+     res = false if val.getTime() isnt lit.getTime()
+    else
+     res = false if lit isnt val
    else if comp is 'gte'
     res = false if lit < val
    else if comp is 'gt'

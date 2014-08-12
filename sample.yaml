@@ -5,6 +5,10 @@ condition:
  -
   one.two.three.four.five: 5
  -
+  date:
+   comp: is
+   val: 2014-08-12
+ -
   - AND
   -
    - OR
@@ -63,4 +67,8 @@ records:
     three:
      four:
       five: 5
+ -
+  date: 2014-08-12
+ -
+  date: 2014-08-13
 
