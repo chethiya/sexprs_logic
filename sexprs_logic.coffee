@@ -11,10 +11,10 @@ compile = (cond) ->
    oper = 'and'
    isMap = on
   else
-   throw "invalid condition"
+   throw new Error "invalid condition"
 
   if oper isnt 'and' and oper isnt 'or' and oper isnt 'not'
-   throw "Invalid binary operation: #{cond[0]}"
+   throw new Error "Invalid binary operation: #{cond[0]}"
   res = off
   if oper is 'and'
    res = on
@@ -84,7 +84,7 @@ compile = (cond) ->
       st += "#{TABL} lit = parseInt(lit);\n"
       st += "#{TABL}}\n"
      else
-      throw "Unknown type #{v.type}"
+      throw new Error "Unknown type #{v.type}"
 
     #global cast
     if comp is 'regex'
@@ -115,7 +115,7 @@ compile = (cond) ->
     else if comp is 'regex'
      st += "#{TABL}l#{l+1} = global#{gc}.test(lit);\n"
     else
-     throw "Invalid comparator: #{comp}"
+     throw new Error "Invalid comparator: #{comp}"
 
 
     st += "#{TABL}l#{l} = l#{l+1};\n"
@@ -190,7 +190,7 @@ compileByBind = (cond) ->
   if (typeof cond is 'object') and (cond instanceof Array)
    oper = cond[0]?.trim().toLowerCase()
    if oper isnt 'and' and oper isnt 'or' and oper isnt 'not'
-    throw "Invalid binary operation: #{cond[0]}"
+    throw new Error "Invalid binary operation: #{cond[0]}"
    context =
     oper: oper
     funcs: []
@@ -219,7 +219,7 @@ compileByBind = (cond) ->
      c.val = v.val
      c.type = v.type if v.type?
     else
-     throw "Invalid comparison object"
+     throw new Error "Invalid comparison object"
 
     if comp is 'regex'
      c.val = new RegExp c.val
@@ -242,7 +242,7 @@ compileByBind = (cond) ->
     else if comp is 'regex'
      context.funcs.push oper_regex.bind c
     else
-     throw "Invalid operator: #{comp}"
+     throw new Error "Invalid operator: #{comp}"
 
    return oper_andornot.bind context
  return createFunc cond
@@ -254,7 +254,7 @@ test = (cond, obj) ->
  if (typeof cond is 'object') and (cond instanceof Array)
   oper = cond[0].trim().toLowerCase()
   if oper isnt 'and' and oper isnt 'or' and oper isnt 'not'
-   throw "Invalid binary operation: #{cond[0]}"
+   throw new Error "Invalid binary operation: #{cond[0]}"
   res = off
   if oper is 'and'
    res = on
@@ -293,7 +293,7 @@ test = (cond, obj) ->
       lit = parseInt lit
       val = parseInt val
    else
-    throw "Invalid comparison object"
+    throw new Error "Invalid comparison object"
 
    #console.log "comp: #{comp}, Key literal: #{lit}, val: #{val}"
 
@@ -317,7 +317,7 @@ test = (cond, obj) ->
   #console.log "RETURN: #{res}"
   return res
  else
-  throw "Invalid condition"
+  throw new Error "Invalid condition"
 
 exports?.compile = compile
 exports?.compileByBind = compileByBind
