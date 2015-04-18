@@ -208,7 +208,7 @@ compileByBind = (cond) ->
     c.keys = k.split '.' if typeof k is 'string' and k.length > 0
 
     comp = undefined
-    if typeof v is 'string' or typeof v is 'number'
+    if typeof v is 'string' or typeof v is 'number' or typeof v is 'boolean'
      comp = 'is'
      c.val = v
     else if (typeof v is 'object') and (v instanceof RegExp)
@@ -279,7 +279,7 @@ test = (cond, obj) ->
    comp = lit = val = undefined
    lit = obj
    lit = lit?[key] for key in keys
-   if typeof v is 'string' or typeof v is 'number'
+   if typeof v is 'string' or typeof v is 'number' or typeof v is 'boolean'
     comp = 'is'
     val = v
    else if (typeof v is 'object') and not (v instanceof Array)
