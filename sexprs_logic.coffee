@@ -151,6 +151,12 @@ compileByBind = (cond) ->
    return @val.getTime() is kval.getTime()
   return kval is @val
 
+ oper_isnt = (obj) ->
+  kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return @val.getTime() isnt kval.getTime()
+  return kval isnt @val
+
  oper_gte = (obj) ->
   kval = cast @type, keyVal obj, @keys
   if @val instanceof Date and kval instanceof Date
@@ -239,6 +245,8 @@ compileByBind = (cond) ->
 
     if comp is 'is'
      context.funcs.push oper_is.bind c
+    else if comp is 'isnt'
+     context.funcs.push oper_isnt.bind c
     else if comp is 'gte'
      context.funcs.push oper_gte.bind c
     else if comp is 'gt'
