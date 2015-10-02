@@ -153,20 +153,28 @@ compileByBind = (cond) ->
 
  oper_gte = (obj) ->
   kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return kval.getTime() >= @val.getTime()
   return kval >= @val
 
 
  oper_gt = (obj) ->
   kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return kval.getTime() > @val.getTime()
   return kval > @val
 
 
  oper_lte = (obj) ->
   kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return kval.getTime() <= @val.getTime()
   return kval <= @val
 
  oper_lt = (obj) ->
   kval = cast @type, keyVal obj, @keys
+  if @val instanceof Date and kval instanceof Date
+   return kval.getTime() < @val.getTime()
   return kval < @val
 
 
